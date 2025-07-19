@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-NUM_RUNS = 100  # Set how many times you want to run the simulation
+NUM_RUNS = 50  # Set how many times you want to run the simulation
 win_count = 0
 
 for i in range(NUM_RUNS):
@@ -9,7 +9,7 @@ for i in range(NUM_RUNS):
     proc = subprocess.run(
         [
             "uv", "run", "python3", "match_simulator.py",
-            "--submissions", "1:wena11.py", "3:example_submissions/2_bot_domainexpansion.py", "--engine"
+            "--submissions", "1:wena10_phase4b1.py", "3:wena10_phase31.py", "--engine"
         ],
         capture_output=True, text=True
     )
