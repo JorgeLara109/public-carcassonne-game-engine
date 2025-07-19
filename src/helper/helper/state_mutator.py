@@ -127,6 +127,7 @@ class StateMutator:
 
         self.state.me.num_meeples = e.num_starting_meeples
         self.state.map.start_river_phase()
+        self.state.round = 0
 
     def _commit_event_player_meeple_freed(self, e: EventPlayerMeepleFreed) -> None:
         x, y = e.tile.pos
@@ -135,9 +136,11 @@ class StateMutator:
         assert tile is not None
         tile.internal_claims[e.placed_on] = None
         self.state.players_meeples[e.player_id] += 1
+        self.state.players[e.player_id].points += e.reward
 
         if e.player_id == self.state.me.player_id:
             self.state.me.num_meeples += 1
+            self.state.me.points += e.reward
 
     def _commit_event_starting_tile_placed(self, e: EventStartingTilePlaced) -> None:
         self.state.map.place_river_start(e.tile_placed.pos)
@@ -200,7 +203,8 @@ class StateMutator:
         pass
 
     def _commit_event_player_turn_started(self, e: EventPlayerTurnStarted) -> None:
-        pass
+        if e.player_id == self.state.turn_order[0]:
+            self.state.round += 1
 
     def _commit_event_player_won(self, e: EventPlayerWon) -> None:
         pass

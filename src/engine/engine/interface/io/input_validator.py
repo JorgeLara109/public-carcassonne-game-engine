@@ -96,21 +96,23 @@ class MoveValidator:
                 f"You tried placing a tile in your hand but the player tile index mismatched - Player tile index {e.player_tile_index}, Tile Type Given {tile.tile_type}"
             )
 
-        tile = deepcopy(tile)
-
         # Validate rotation
         if e.tile.rotation not in VALID_ROTATIONS:
             raise ValueError(
                 f"You tried placing with an invalid rotation - Recieved Tile Rotation {e.tile.rotation}"
             )
 
-        while tile.rotation != e.tile.rotation:
-            tile.rotate_clockwise(1)
-        # Validate Tile Pos
+        if self.state.map._grid[y][x]:
+            raise ValueError(f"You placed a tile in an occupied space - at {x, y}")
+
         if not any(neighbouring_tiles.values()):
             raise ValueError(
                 f"You placed a tile in an empty space - no neighbours at {x, y}"
             )
+
+        tile = deepcopy(tile)
+        while tile.rotation != e.tile.rotation:
+            tile.rotate_clockwise(1)
 
         # Validating each edge is alighed with a corrrect structure
         river_flag = False

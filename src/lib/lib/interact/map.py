@@ -69,7 +69,6 @@ class Map:
             for edge in Tile.get_edges()
         }
         river_connections = 0
-        print("from river validation: ", self.straight_rivers, flush=True)
         for edge, neighbour_tile in neighbouring_tiles.items():
             edge_structure = tile.internal_edges[edge]
 
@@ -88,24 +87,20 @@ class Map:
                     "bottom_edge": (0, 1),
                     "left_edge": (-1, 0),
                 }
+                # Check if we are placing a turn piece
+                if not tile.straight_river():
+                    # Look at the tile i tiles away from the direction the turn is facing on our current tile
+                    for i in range(1, self.straight_rivers + 2):
+                        extension = forcast_coordinates[edge]
+                        forecast_x = x + extension[0] * i
+                        forecast_y = y + extension[1] * i
 
-                extension = forcast_coordinates[edge]
-                forecast_x = x + extension[0]
-                forecast_y = y + extension[1]
-
-                for i in range(1, self.straight_rivers + 1):
-                    extension = forcast_coordinates[edge]
-
-                    # Look at the tile i tiles away from the direction the river is facing on our current tile
-                    forecast_x = x + extension[0] * i
-                    forecast_y = y + extension[1] * i
-
-                    for coords in forcast_coordinates.values():
-                        checking_x = forecast_x + coords[0]
-                        checking_y = forecast_y + coords[1]
-                        if not (checking_x == x and checking_y == y):
-                            if self._grid[checking_y][checking_x] is not None:
-                                return "uturn"
+                        for coords in forcast_coordinates.values():
+                            checking_x = forecast_x + coords[0]
+                            checking_y = forecast_y + coords[1]
+                            if not (checking_x == x and checking_y == y):
+                                if self._grid[checking_y][checking_x] is not None:
+                                    return "uturn"
 
         # Check if there is at least one river edge that is connected
         if river_connections == 0:

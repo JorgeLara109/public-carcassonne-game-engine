@@ -1,5 +1,5 @@
 from lib.config.map_config import MONASTARY_IDENTIFIER, tile_counts
-from lib.config.scoring import NO_POINTS
+from lib.config.scoring import EMBLEM_PARTIAL_POINTS, EMBLEM_POINTS, NO_POINTS
 from lib.interact.structure import StructureType
 from lib.interact.meeple import Meeple
 
@@ -40,14 +40,27 @@ class TileModifier(Enum):
 
     @final
     @staticmethod
-    def apply_point_modifiers(mods: list["TileModifier"], points: int) -> int:
+    def apply_point_modifiers(
+        mods: list["TileModifier"], points: int, partial: bool = False
+    ) -> int:
         def _point_modifier_config(_mod: "TileModifier") -> Callable[[int], int]:
             return {
-                TileModifier.EMBLEM: lambda x: x + 1,
+                TileModifier.EMBLEM: lambda x: x + EMBLEM_POINTS,
+            }.get(_mod, lambda x: x + NO_POINTS)
+
+        def _point_modifier_config_partial(
+            _mod: "TileModifier",
+        ) -> Callable[[int], int]:
+            return {
+                TileModifier.EMBLEM: lambda x: x + EMBLEM_PARTIAL_POINTS,
             }.get(_mod, lambda x: x + NO_POINTS)
 
         for mod in mods:
-            points = _point_modifier_config(mod)(points)
+            if partial:
+                points = _point_modifier_config_partial(mod)(points)
+
+            else:
+                points = _point_modifier_config(mod)(points)
 
         return points
 
