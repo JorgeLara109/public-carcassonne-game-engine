@@ -9,7 +9,7 @@ for i in range(NUM_RUNS):
     proc = subprocess.run(
         [
             "uv", "run", "python3", "match_simulator.py",
-            "--submissions", "1:wena10_phase4b1.py", "3:wena10_phase31.py", "--engine"
+            "--submissions", "1:example_submissions/.py", "3:wena10_phase31.py", "--engine"
         ],
         capture_output=True, text=True
     )
